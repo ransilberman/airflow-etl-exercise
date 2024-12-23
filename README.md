@@ -81,3 +81,28 @@ with DAG(
     insert_data_task >> fetch_data_task
 
 ```
+
+
+# Exercise:
+Change the above code to use realtime data from Yahoo Finance.
+Use the following code snippet to implement reading yahoo quotes for Apple stock:
+```bash
+pip install yfinance
+```
+
+```python
+import yfinance as yf
+
+# Fetch stock data
+stock = yf.Ticker("AAPL")  # Example: Apple Inc.
+stock_info = stock.info
+
+print(f"Name: {stock_info['longName']}")
+print(f"Symbol: {stock_info['symbol']}")
+print(f"Current Price: {stock_info['regularMarketPrice']}")
+
+# Get historical data
+data = stock.history(period="1mo")  # Options: '1d', '5d', '1mo', '6mo', '1y', etc.
+print(data)
+```
+
