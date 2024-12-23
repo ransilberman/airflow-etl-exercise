@@ -106,3 +106,8 @@ data = stock.history(period="1mo")  # Options: '1d', '5d', '1mo', '6mo', '1y', e
 print(data)
 ```
 
+## Requirements for submittion the exercise:
+1. copy your DAG code (not in pdf format that destroy indentation)
+2. send pring screen of the logs of your DAG run
+3. select the results of a SELECT statement that shows the data in the sqlite table
+   
