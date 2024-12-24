@@ -23,62 +23,59 @@ sqlite> .exit
 
 # Create DAG
 
-Dag Code: `etl_x_sqlite_dag.py`
+Dag Code: `taskflow_x_sqlite_dag.py`
 
 ```python
-from airflow import DAG
-from airflow.operators.python import PythonOperator
+
+from __future__ import annotations
+from airflow.decorators import dag, task
 from datetime import datetime
+import pandas as pd
+import pyarrow as pa
 import sqlite3
 
 # Define the database file (local SQLite database)
 DB_FILE = "/tmp/airflow_example.db"
 
-def insert_data():
-    """Function to insert data into the SQLite database."""
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    current_datetime = datetime.now()
-    cursor.execute("""
-        INSERT INTO tweets (datetime, username, text, source, location)
-        VALUES (?, ?, ?, ?, ?)
-    """, (current_datetime, "Ran S", "Some Text", "cnn.com", "USA"))
-
-    conn.commit()
-    conn.close()
-
-def fetch_data():
-    """Function to fetch and log data from the SQLite database."""
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tweets")
-    rows = cursor.fetchall()
-    for row in rows:
-        print(row)  # This will appear in the task logs
-    conn.close()
-
-# Define the DAG
-with DAG(
-    dag_id="etl_x_sqlite_dag",
-    start_date=datetime(2024, 12, 20),
-    schedule_interval=None,  # Trigger manually
+@dag(
+    schedule=None,
+    start_date=datetime(2024, 1, 1),
     catchup=False,
-) as dag:
+    tags=["Exercize"],
+)
 
-    # Task to insert data
-    insert_data_task = PythonOperator(
-        task_id="insert_data",
-        python_callable=insert_data,
-    )
+def taskflow_x_sqlite():
 
-    # Task to fetch data
-    fetch_data_task = PythonOperator(
-        task_id="fetch_data",
-        python_callable=fetch_data,
-    )
+    @task()
+    def extract():
+        current_datetime = datetime.now()
+        tweets_list = [[current_datetime, "Joe Dow", "Great news", "www.cnn.com", "USA"], \
+                [current_datetime, "Jane Dow", "Better news","www.fox.com", "USA"], \
+                [current_datetime, "Moses Cohen", "Even Greater News", "www.walla.co.il", "Israel"]]
+        tweets_df = pd.DataFrame(tweets_list, columns=['datetime', 'username', 'text', 'source', 'location'])
+        return tweets_df
 
-    # Define task dependencies
-    insert_data_task >> fetch_data_task
+    @task()
+    def transform(tweets_df:pd.DataFrame):
+        filtered_df = tweets_df[tweets_df['location'] == 'USA']
+        print(filtered_df)
+        return filtered_df
+
+    @task()
+    def load(filtered_df:pd.DataFrame):
+        """Function to insert data into the SQLite database."""
+        conn = sqlite3.connect(DB_FILE)
+        filtered_df.to_sql('tweets', conn, if_exists='replace', index=False)
+        conn.commit()
+        conn.close()
+
+    # [START main_flow]
+    load(transform(extract()))
+    # [END main_flow]        
+
+# [START dag_invocation]
+taskflow_x_sqlite()
+# [END dag_invocation]
 
 ```
 
@@ -107,7 +104,7 @@ print(data)
 ```
 
 ## Requirements for submittion the exercise:
-1. copy your DAG code (not in pdf format that destroy indentation)
-2. send pring screen of the logs of your DAG run
-3. select the results of a SELECT statement that shows the data in the sqlite table
+1. Copy your DAG code (not in pdf format that destroy indentation)
+2. Show print-screen of the logs of your DAG run
+3. Show the results of a `SELECT` statement that shows the data in the sqlite table
    
