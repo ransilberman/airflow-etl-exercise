@@ -79,6 +79,17 @@ taskflow_x_sqlite()
 
 ```
 
+# Start Airflow
+Install the following libraries for Python:
+```bash
+pip install pandas
+pip install pyarrow
+```
+1. Stop Airflow if running (Ctrl+C)
+2. Start airflow again by running `airflow standalone'
+3. Open Airflow GUI in [http://localhost:8080](http://localhost:8080)
+4. Look for the DAG `taskflow_x_sqlite`
+   
 
 # Exercise:
 Change the above code to use realtime data from Yahoo Finance.
