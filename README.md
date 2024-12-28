@@ -1,6 +1,9 @@
-# Requirements to run the exercise
 
-## Install sqlite
+
+# Install and Run Airflow
+Follow the instructions described in [install-airflow-on-aws](https://github.com/ransilberman/airflow-etl-exercise/blob/main/install-airflow-on-aws%20/README.md)
+
+# Install sqlite
 ```bash
 sudo apt install sqlite3
 sqlite3 /tmp/airflow_example.db
