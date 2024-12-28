@@ -95,30 +95,8 @@ pip install pyarrow
    
 
 # Exercises:
-## Exercise-1: Write your first DAG
-Change the above code to use realtime data from Yahoo Finance.
-Use the following code snippet to implement reading yahoo quotes for Apple stock:
-```bash
-pip install yfinance
-```
 
-```python
-import yfinance as yf
-
-# Fetch stock data
-stock = yf.Ticker("AAPL")  # Example: Apple Inc.
-stock_info = stock.info
-
-print(f"Name: {stock_info['longName']}")
-print(f"Symbol: {stock_info['symbol']}")
-print(f"Current Price: {stock_info['regularMarketPrice']}")
-
-# Get historical data
-data = stock.history(period="1mo")  # Options: '1d', '5d', '1mo', '6mo', '1y', etc.
-print(data)
-```
-
-## Exercise-2: Add Kafka-consumer to a task in the DAG
+## Exercise-1: Add Kafka-consumer to a task in the DAG
 1. Install Kafka on Docker locally. See [kafka-docker-pytohn](https://github.com/ransilberman/airflow-etl-exercise/blob/main/kafka-docker-pytohn/README.md)
 2. Use the code below to replcace the 'extract' task in the DAG you wrote above:
 ```python
@@ -148,8 +126,32 @@ def extract():
 ```
 3. Generate some tweets and see that they are stored in sqlite tabe.
 
+## Exercise-2: Write your first DAG
+Based on the above code, write a new DAG to use realtime data from Yahoo Finance.
+This DAG will read the finance quotes from Yahoo and store it in a new table in SQLite table.
+Use the following code snippet to implement reading yahoo quotes for Apple stock:
+```bash
+pip install yfinance
+```
+
+```python
+import yfinance as yf
+
+# Fetch stock data
+stock = yf.Ticker("AAPL")  # Example: Apple Inc.
+stock_info = stock.info
+
+print(f"Name: {stock_info['longName']}")
+print(f"Symbol: {stock_info['symbol']}")
+print(f"Current Price: {stock_info['regularMarketPrice']}")
+
+# Get historical data
+data = stock.history(period="1mo")  # Options: '1d', '5d', '1mo', '6mo', '1y', etc.
+print(data)
+```
+
 ## Requirements for submittion the exercise:
-1. Copy your DAG code (not in pdf format that destroy indentation)
-2. Show print-screen of the logs of your DAG run
-3. Show the results of a `SELECT` statement that shows the data in the sqlite table
+1. Copy your DAGs code (not in pdf format that destroy indentation)
+2. Show print-screen of the logs of your DAGs run
+3. Show the results of the `SELECT` statements that shows the data in the sqlite tables.
    
