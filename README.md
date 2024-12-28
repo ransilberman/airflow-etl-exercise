@@ -94,7 +94,8 @@ pip install pyarrow
 4. Look for the DAG `taskflow_x_sqlite`
    
 
-# Exercise:
+# Exercises:
+## Exercise-1: Write your first DAG
 Change the above code to use realtime data from Yahoo Finance.
 Use the following code snippet to implement reading yahoo quotes for Apple stock:
 ```bash
@@ -116,6 +117,36 @@ print(f"Current Price: {stock_info['regularMarketPrice']}")
 data = stock.history(period="1mo")  # Options: '1d', '5d', '1mo', '6mo', '1y', etc.
 print(data)
 ```
+
+## Exercise-2: Add Kafka-consumer to a task in the DAG
+1. Install Kafka on Docker locally. See [kafka-docker-pytohn](https://github.com/ransilberman/airflow-etl-exercise/blob/main/kafka-docker-pytohn/README.md)
+2. Use the code below to replcace the 'extract' task in the DAG you wrote above:
+```python
+# use this code to replace the 'extract' task:
+@task()
+def extract():
+   # Kafka configuration
+   KAFKA_BROKER_URL = "localhost:9092"
+   KAFKA_TOPIC = "my_test_topic"
+   MAX_CONSUME_MESSAGES = 10
+   current_datetime = datetime.now()
+   consumer = KafkaConsumer(
+       KAFKA_TOPIC,
+       bootstrap_servers=KAFKA_BROKER_URL,
+       auto_offset_reset="earliest",
+       enable_auto_commit=True,
+   )
+   messages = consumer.poll(timeout_ms=1000, max_records=MAX_CONSUME_MESSAGES)
+   # Process messages
+   tweets_list_kafka=list()
+   for topic_partition, records in messages.items():
+       for record in records:
+           tweets_list_kafka.append([current_datetime, "Joe Dow", record.value.decode("utf-8"), "www.cnn.com", "USA"])
+   print(tweets_list_kafka)
+   tweets_df = pd.DataFrame(tweets_list_kafka, columns=['datetime', 'username', 'text', 'source', 'location'])
+   return tweets_df
+```
+3. Generate some tweets and see that they are stored in sqlite tabe.
 
 ## Requirements for submittion the exercise:
 1. Copy your DAG code (not in pdf format that destroy indentation)
