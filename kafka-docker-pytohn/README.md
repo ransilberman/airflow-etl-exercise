@@ -1,6 +1,28 @@
 # kafka-docker-pytohn
 Run Kafka with docker and access it via Python
 
+## Kafka documentation:
+[KafkaProducer](https://kafka-python.readthedocs.io/en/master/apidoc/KafkaProducer.html)
+
+Note the following arguments:
+- bootstrap_servers
+- value_serializer
+- acks
+- compression_type
+- batch_size
+- partitioner
+
+[KafkaConsumer](https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html)
+
+Note the following arguments:
+- bootstrap_servers
+- group_id
+- value_deserializer
+- fetch_max_wait_ms
+- fetch_max_bytes
+- enable_auto_commit
+
+
 # Get Kafka in Docker container and run it
 Get Kafka Docker container:
 ```bash
